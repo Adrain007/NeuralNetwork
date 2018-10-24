@@ -1,4 +1,6 @@
-class Neuron {
+import java.io.Serializable;
+
+class Neuron implements Serializable {
     private double [] inputs;
     private double [] weights;
 

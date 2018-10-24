@@ -80,7 +80,7 @@ class NeuralNet {
         int index = 0;
         for(Neuron neuron: hiddenLayer){
             hiddenLayerOut[index] = neuron.Output(neuron.getInputs(),neuron.getWeights());
-            System.out.println("h: "+hiddenLayerOut[index]);
+            //System.out.println("h: "+hiddenLayerOut[index]);
             index++;
         }
     }
@@ -88,7 +88,7 @@ class NeuralNet {
         int index = 0;
         for(Neuron neuron: outputLayer){
             outputLayerOut[index] = neuron.Output(neuron.getInputs(),neuron.getWeights());
-            System.out.println("o: "+outputLayerOut[index]);
+            //System.out.println("o: "+outputLayerOut[index]);
             index++;
         }
     }
@@ -124,48 +124,53 @@ class NeuralNet {
     }
 
     void study(){
-        //for(int numOfPatterns = 0;numOfPatterns<10;numOfPatterns++) {
-        int numOfPatterns = 0;
-            setHiddenLayerInputs(patterns[numOfPatterns]);
-            counthiddenLayerOut();
-            setOutputLayerInputs();
-            counOutput();
-            do {
-                for (int i = 0; i < outputLayer.size(); i++) {
-                    Neuron neuron = outputLayer.get(i);
-                    outputLayerErr[i] = neuron.errorOutNeuron(neuron.Output(neuron.getInputs(), neuron.getWeights()), answers[numOfPatterns][i]);
-                    System.out.println("o -- " + outputLayerErr[i]);
-                }
-                for (int i = 0; i < hiddenLayer.size(); i++) {
-                    Neuron neuron = hiddenLayer.get(i);
-                    hiddenLayerErr[i] = neuron.errorHiddenNeuron(getOutWeight(i), outputLayerErr);
-                    System.out.println("h -- " + hiddenLayerErr[i]);
-                }
-
-                for (int i = 0; i < outputLayer.size(); i++) {
-                    Neuron neuron = outputLayer.get(i);
-                    double[] outputWeight = neuron.getWeights();
-                    double[] newWeight = new double[outputWeight.length];
-                    for (int j = 0; j < outputWeight.length; j++) {
-                        Neuron hiddenNeuron = hiddenLayer.get(j);
-                        newWeight[j] = outputWeight[j] + 0.5 * outputLayerErr[i] * hiddenNeuron.Output(hiddenNeuron.getInputs(), hiddenNeuron.getWeights());
-                    }
-                    neuron.setWeights(newWeight);
-                }
-                for (int i = 0; i < hiddenLayer.size(); i++) {
-                    Neuron neuron = hiddenLayer.get(i);
-                    double[] hiddenWeight = neuron.getWeights();
-                    double[] newWeight = new double[hiddenWeight.length];
-                    double[] inputNeuron = patterns[numOfPatterns];
-                    for (int j = 0; j < hiddenWeight.length; j++) {
-                        newWeight[j] = hiddenWeight[j] + 0.5 * hiddenLayerErr[i] * inputNeuron[j];
-                    }
-                    neuron.setWeights(newWeight);
-                }
+        int n = 0;
+        do {
+            for (int numOfPatterns = 0; numOfPatterns < 10; numOfPatterns++) {
+                //int numOfPatterns = 0;
+                setHiddenLayerInputs(patterns[numOfPatterns]);
                 counthiddenLayerOut();
+                setOutputLayerInputs();
                 counOutput();
-            } while (ERROR(answers[numOfPatterns]) > 0.0001);
-        //}
+                do {
+                    for (int i = 0; i < outputLayer.size(); i++) {
+                        Neuron neuron = outputLayer.get(i);
+                        outputLayerErr[i] = neuron.errorOutNeuron(neuron.Output(neuron.getInputs(), neuron.getWeights()), answers[numOfPatterns][i]);
+                        //System.out.println("o -- " + outputLayerErr[i]);
+                    }
+                    for (int i = 0; i < hiddenLayer.size(); i++) {
+                        Neuron neuron = hiddenLayer.get(i);
+                        hiddenLayerErr[i] = neuron.errorHiddenNeuron(getOutWeight(i), outputLayerErr);
+                        //System.out.println("h -- " + hiddenLayerErr[i]);
+                    }
+
+                    for (int i = 0; i < outputLayer.size(); i++) {
+                        Neuron neuron = outputLayer.get(i);
+                        double[] outputWeight = neuron.getWeights();
+                        double[] newWeight = new double[outputWeight.length];
+                        for (int j = 0; j < outputWeight.length; j++) {
+                            Neuron hiddenNeuron = hiddenLayer.get(j);
+                            newWeight[j] = outputWeight[j] + 0.5 * outputLayerErr[i] * hiddenNeuron.Output(hiddenNeuron.getInputs(), hiddenNeuron.getWeights());
+                        }
+                        neuron.setWeights(newWeight);
+                    }
+                    for (int i = 0; i < hiddenLayer.size(); i++) {
+                        Neuron neuron = hiddenLayer.get(i);
+                        double[] hiddenWeight = neuron.getWeights();
+                        double[] newWeight = new double[hiddenWeight.length];
+                        double[] inputNeuron = patterns[numOfPatterns];
+                        for (int j = 0; j < hiddenWeight.length; j++) {
+                            newWeight[j] = hiddenWeight[j] + 0.5 * hiddenLayerErr[i] * inputNeuron[j];
+                        }
+                        neuron.setWeights(newWeight);
+                    }
+                    counthiddenLayerOut();
+                    setOutputLayerInputs();
+                    counOutput();
+                } while (ERROR(answers[numOfPatterns]) > 0.0001);
+            }
+            n++;
+        }while (n<20);
     }
 
     void check(double[] input){
@@ -177,5 +182,14 @@ class NeuralNet {
             outputNeuron.setInputs(hiddenLayerOut);
         }
         counOutput();
+        StringBuilder out = new StringBuilder();
+        for (double outputNeuron: outputLayerOut){
+            if(outputNeuron>0.8){
+                out.append('1');
+            }else if(outputNeuron<0.1){
+                out.append('0');
+            }
+        }
+        System.out.println(Integer.parseInt(out.toString(),2));
     }
 }

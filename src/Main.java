@@ -11,7 +11,7 @@ public class Main {
         } catch (IOException e){
             e.printStackTrace();
         }
-        net.initHidden(net.patterns[0]);
+        net.initHidden(net.patterns[9]);
         net.counthiddenLayerOut();
         net.initOutputLayer();
         net.study();
