@@ -1,7 +1,8 @@
-public class Neuron {
+class Neuron {
     private double [] inputs;
     private double [] weights;
-    public Neuron(double[] inputs,double[] weights){
+
+    Neuron(double[] inputs, double[] weights){
         this.inputs = inputs;
         this.weights = weights;
     }
@@ -14,15 +15,41 @@ public class Neuron {
         return Math.pow(1+Math.exp(-sum),-1);
     }
 
-    public double[] getInputs() {
-        return inputs;
+    double[] getInputs() {
+        return this.inputs;
     }
 
-    public double[] getWeights() {
-        return weights;
+    double[] getWeights() {
+        return this.weights;
     }
 
-    public double Output(double[] inputs,double[] weights){
+    double getWeight(int index) {
+        return this.weights[index];
+    }
+
+    void setWeights(double[] weights) {
+        this.weights = weights;
+    }
+    void setInputs(double[] inputs) {
+        this.inputs = inputs;
+    }
+
+    double Output(double[]inputs,double[]weights){
         return Activator(inputs,weights);
+    }
+    private double derivative(){
+        return Output(inputs,weights)*(1-Output(inputs,weights));
+    }
+
+    double errorOutNeuron(double f, double goal){
+        return f*(1-f)*(goal-f);
+    }
+
+    double errorHiddenNeuron(double[] weight, double[] er){
+        double sum = 0;
+        for(int j = 0;j<weight.length;j++){
+            sum+=weight[j]*er[j];
+        }
+        return derivative()*sum;
     }
 }
