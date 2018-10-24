@@ -1,6 +1,7 @@
+import java.io.*;
 import java.util.ArrayList;
 
-class NeuralNet {
+class NeuralNet implements Serializable {
     double [] inputLayer;
     private double [] hiddenLayerOut;
     private double [] outputLayerOut;
@@ -171,6 +172,7 @@ class NeuralNet {
             }
             n++;
         }while (n<20);
+
     }
 
     void check(double[] input){
