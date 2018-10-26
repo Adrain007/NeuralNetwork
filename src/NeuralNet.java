@@ -170,15 +170,15 @@ class NeuralNet implements Serializable {
                 } while (ERROR(answers[numOfPatterns]) > 0.00001);
             }
             //n++;
-            setHiddenLayerInputs(patterns[8]);
+            setHiddenLayerInputs(patterns[1]);
             counthiddenLayerOut();
             setOutputLayerInputs();
             counOutput();
-        }while (ERROR(answers[8])>0.00001);
+        }while (ERROR(answers[1])>0.00001);
 
     }
 
-    void check(double[] input){
+    String check(double[] input){
         for (Neuron hiddenNeuron: hiddenLayer){
             hiddenNeuron.setInputs(input);
         }
@@ -189,13 +189,12 @@ class NeuralNet implements Serializable {
         counOutput();
         StringBuilder out = new StringBuilder();
         for (double outputNeuron: outputLayerOut){
-            System.out.println("out: "+outputNeuron);
             if(outputNeuron>0.6){
                 out.append('1');
             }else{
                 out.append('0');
             }
         }
-        System.out.println(Integer.parseInt(out.toString(),2));
+        return String.valueOf(Integer.parseInt(out.toString(),2));
     }
 }
