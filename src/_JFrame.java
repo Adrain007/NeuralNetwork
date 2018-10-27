@@ -16,8 +16,8 @@ public class _JFrame implements ActionListener {
         JPanel panel = new JPanel();
         JPanel panel1 = new JPanel();
         JButton button = new JButton("Solve");
-        JButton save = new JButton("Save");
-        JButton load = new JButton("Load");
+        JButton save = new JButton("Save ");
+        JButton load = new JButton("Load ");
         button.addActionListener(this);
         save.addActionListener(this);
         load.addActionListener(this);
@@ -63,7 +63,7 @@ public class _JFrame implements ActionListener {
                     }
                 }
                 try {
-                    inputLine = new String(Files.readAllBytes(Paths.get("C:/Users/Адриан/IdeaProjects/NeuralNetwork/src","source.txt")), "UTF-8");
+                    inputLine = new String(Files.readAllBytes(Paths.get("source.txt")), "UTF-8");
                 } catch (Exception e3) {
                     e3.printStackTrace();
                 }
@@ -71,21 +71,20 @@ public class _JFrame implements ActionListener {
                 String s = net.check(net.inputLayer);
                 textArea.setText(s);
                 break;
-            case ("Save"):
+            case ("Save "):
                 try {
-                    FileWriter writer = new FileWriter("C:/Users/Адриан/IdeaProjects/NeuralNetwork/src/source.txt");
+                    FileWriter writer = new FileWriter("source.txt");
                     BufferedWriter bufWriter  = new BufferedWriter(writer);
                     bufWriter.write(textAreaFile.getText());
                     bufWriter.close();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
                 break;
-            case("Load"):
+            case ("Load "):
                 textAreaFile.setText("");
                 try {
-                    Scanner scan = new Scanner(new File("C:/Users/Адриан/IdeaProjects/NeuralNetwork/src/source.txt"));
+                    Scanner scan = new Scanner(new File("source.txt"));
                     while (scan.hasNext()){
                         textAreaFile.append(scan.nextLine()+"\n");
                     }
