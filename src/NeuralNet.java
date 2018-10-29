@@ -44,16 +44,12 @@ class NeuralNet implements Serializable {
 
     void initInputLayer(String input){
         char[] buf = input.toCharArray();
-        int[] mas = new int[inputLayer.length];
         int index = 0;
         for (char aBuf : buf) {
             if (aBuf == '0' || aBuf == '1') {
-                mas[index] = aBuf - 48;
+                inputLayer[index] = aBuf - 48;
                 index++;
             }
-        }
-        for(int i = 0; i < mas.length; i++){
-            inputLayer[i] = mas[i];
         }
     }
 
@@ -89,7 +85,7 @@ class NeuralNet implements Serializable {
         int index = 0;
         for(Neuron neuron: outputLayer){
             outputLayerOut[index] = neuron.Output(neuron.getInputs(),neuron.getWeights());
-            //System.out.println("o: "+outputLayerOut[index]);
+            System.out.println("o: "+outputLayerOut[index]);
             index++;
         }
     }
@@ -189,7 +185,7 @@ class NeuralNet implements Serializable {
         counOutput();
         StringBuilder out = new StringBuilder();
         for (double outputNeuron: outputLayerOut){
-            if(outputNeuron>0.6){
+            if(outputNeuron>0.45){
                 out.append('1');
             }else{
                 out.append('0');
