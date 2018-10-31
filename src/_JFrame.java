@@ -4,38 +4,41 @@ import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Scanner;
 
 
 public class _JFrame implements ActionListener {
-    private JTextField textArea;
+    private JTextArea textArea;
     private JTextArea textAreaFile;
 
     void go() {
         JFrame frame = new JFrame("NeuralNetwork 0.0.1");
         JPanel panel = new JPanel();
         JPanel panel1 = new JPanel();
-        JButton button = new JButton("Solve");
+        JButton solve = new JButton("Solve");
         JButton save = new JButton("Save ");
         JButton load = new JButton("Load ");
-        button.addActionListener(this);
+        solve.addActionListener(this);
         save.addActionListener(this);
         load.addActionListener(this);
-        textArea = new JTextField(10);
-        textAreaFile = new JTextArea(6, 5);
+        textArea = new JTextArea(6,5);
+        textAreaFile = new JTextArea(10, 5);
         textAreaFile.setLineWrap(true);
+        textArea.setLineWrap(true);
         textAreaFile.setEditable(true);
 
         panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
-        frame.getContentPane().add(BorderLayout.WEST, panel);
         frame.getContentPane().add(BorderLayout.EAST, panel1);
-        panel1.add(button);
+        frame.getContentPane().add(BorderLayout.WEST, panel);
+
+        panel1.add(solve);
         panel1.add(save);
         panel1.add(load);
         panel.add(textAreaFile);
         panel.add(textArea);
-        frame.setSize(200, 160);
+        frame.setSize(200, 320);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -44,6 +47,7 @@ public class _JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case ("Solve"):
+                textArea.setText("Вероятность: \n\r");
                 NeuralNet net;
                 String inputLine = null;
                 try {
@@ -68,8 +72,11 @@ public class _JFrame implements ActionListener {
                     e3.printStackTrace();
                 }
                 net.initInputLayer(inputLine);
-                String s = net.check(net.inputLayer);
-                textArea.setText(s);
+                HashMap<Integer,String> map = net.check(net.inputLayer);
+                for(int num: map.keySet()){
+                    String s = Integer.toString(num)+" : "+map.get(num)+"%\n\r";
+                    textArea.append(s);
+                }
                 break;
             case ("Save "):
                 try {

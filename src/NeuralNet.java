@@ -1,5 +1,7 @@
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 class NeuralNet implements Serializable {
     double [] inputLayer;
@@ -22,24 +24,24 @@ class NeuralNet implements Serializable {
             {1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1}
     };
     private double [][] answers = {
-            {0,0,0,0},
-            {0,0,0,1},
-            {0,0,1,0},
-            {0,0,1,1},
-            {0,1,0,0},
-            {0,1,0,1},
-            {0,1,1,0},
-            {0,1,1,1},
-            {1,0,0,0},
-            {1,0,0,1}
+            {1,0,0,0,0,0,0,0,0,0},
+            {0,1,0,0,0,0,0,0,0,0},
+            {0,0,1,0,0,0,0,0,0,0},
+            {0,0,0,1,0,0,0,0,0,0},
+            {0,0,0,0,1,0,0,0,0,0},
+            {0,0,0,0,0,1,0,0,0,0},
+            {0,0,0,0,0,0,1,0,0,0},
+            {0,0,0,0,0,0,0,1,0,0},
+            {0,0,0,0,0,0,0,0,1,0},
+            {0,0,0,0,0,0,0,0,0,1}
     };
 
     NeuralNet(){
         inputLayer = new double[patterns[0].length];
-        hiddenLayerOut = new double[30];
+        hiddenLayerOut = new double[60];
         outputLayerOut = new double[answers[0].length];
         outputLayerErr = new double[answers[0].length];
-        hiddenLayerErr = new double[30];
+        hiddenLayerErr = new double[hiddenLayerOut.length];
     }
 
     void initInputLayer(String input){
@@ -63,13 +65,13 @@ class NeuralNet implements Serializable {
 
     void initHidden(double[] input){
         hiddenLayer = new ArrayList<>();
-        for(int i = 0; i<30; i++) {
+        for(int i = 0; i<hiddenLayerOut.length; i++) {
             hiddenLayer.add(new Neuron(input, initWeight(inputLayer.length)));
         }
     }
     void initOutputLayer(){
         outputLayer = new ArrayList<>();
-        for(int i = 0; i<4; i++) {
+        for(int i = 0; i<outputLayerOut.length; i++) {
             outputLayer.add(new Neuron(hiddenLayerOut, initWeight(hiddenLayerOut.length)));
         }
     }
@@ -85,7 +87,7 @@ class NeuralNet implements Serializable {
         int index = 0;
         for(Neuron neuron: outputLayer){
             outputLayerOut[index] = neuron.Output(neuron.getInputs(),neuron.getWeights());
-            System.out.println("o: "+outputLayerOut[index]);
+            //System.out.println("'"+index+"' : "+outputLayerOut[index]);
             index++;
         }
     }
@@ -95,6 +97,7 @@ class NeuralNet implements Serializable {
         for(int i = 0; i < answer.length; i++){
             sum+=Math.pow(answer[i]-outputLayerOut[i],2);
         }
+        System.out.println("Err: "+0.5*sum);
         return 0.5*sum;
     }
 
@@ -121,9 +124,8 @@ class NeuralNet implements Serializable {
     }
 
     void study(){
-        //int n = 0;
         do {
-            for (int numOfPatterns = 0; numOfPatterns < 10; numOfPatterns++) {
+            for (int numOfPatterns = 0; numOfPatterns < patterns.length; numOfPatterns++) {
                 setHiddenLayerInputs(patterns[numOfPatterns]);
                 counthiddenLayerOut();
                 setOutputLayerInputs();
@@ -165,16 +167,15 @@ class NeuralNet implements Serializable {
                     counOutput();
                 } while (ERROR(answers[numOfPatterns]) > 0.00001);
             }
-            //n++;
-            setHiddenLayerInputs(patterns[1]);
+            setHiddenLayerInputs(patterns[0]);
             counthiddenLayerOut();
             setOutputLayerInputs();
             counOutput();
-        }while (ERROR(answers[1])>0.00001);
-
+        }while (ERROR(answers[0])>0.00001);
     }
 
-    String check(double[] input){
+    HashMap<Integer,String> check(double[] input){
+        HashMap<Integer,String> out = new HashMap<>();
         for (Neuron hiddenNeuron: hiddenLayer){
             hiddenNeuron.setInputs(input);
         }
@@ -183,14 +184,11 @@ class NeuralNet implements Serializable {
             outputNeuron.setInputs(hiddenLayerOut);
         }
         counOutput();
-        StringBuilder out = new StringBuilder();
+        int index = 0;
         for (double outputNeuron: outputLayerOut){
-            if(outputNeuron>0.45){
-                out.append('1');
-            }else{
-                out.append('0');
-            }
+            out.put(index,new DecimalFormat("#0.00").format(outputNeuron*100));
+            index++;
         }
-        return String.valueOf(Integer.parseInt(out.toString(),2));
+        return out;
     }
 }
