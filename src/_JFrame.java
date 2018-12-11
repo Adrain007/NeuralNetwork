@@ -55,9 +55,6 @@ public class _JFrame implements ActionListener {
                     net = (NeuralNet) is.readObject();
                 } catch (Exception e1) {
                     net = new NeuralNet();
-                    net.initHidden(net.patterns[9]);
-                    net.counthiddenLayerOut();
-                    net.initOutputLayer();
                     net.study();
                     try {
                         ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("Net.ser"));

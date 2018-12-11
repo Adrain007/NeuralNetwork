@@ -11,7 +11,7 @@ class NeuralNet implements Serializable {
     private double [] outputLayerErr;
     private ArrayList<Neuron> hiddenLayer;
     private ArrayList<Neuron> outputLayer;
-    double [] [] patterns = {
+    private double [] [] patterns = {
             {1,1,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1},
             {0,0,0,0,1,1,0,0,1,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1},
             {1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
@@ -63,19 +63,19 @@ class NeuralNet implements Serializable {
         return weight;
     }
 
-    void initHidden(double[] input){
+    private void initHidden(double[] input){
         hiddenLayer = new ArrayList<>();
         for(int i = 0; i<hiddenLayerOut.length; i++) {
             hiddenLayer.add(new Neuron(input, initWeight(inputLayer.length)));
         }
     }
-    void initOutputLayer(){
+    private void initOutputLayer(){
         outputLayer = new ArrayList<>();
         for(int i = 0; i<outputLayerOut.length; i++) {
             outputLayer.add(new Neuron(hiddenLayerOut, initWeight(hiddenLayerOut.length)));
         }
     }
-    void counthiddenLayerOut(){
+    private void countHiddenLayerOut(){
         int index = 0;
         for(Neuron neuron: hiddenLayer){
             hiddenLayerOut[index] = neuron.Output(neuron.getInputs(),neuron.getWeights());
@@ -83,7 +83,7 @@ class NeuralNet implements Serializable {
             index++;
         }
     }
-    private void counOutput(){
+    private void countOutput(){
         int index = 0;
         for(Neuron neuron: outputLayer){
             outputLayerOut[index] = neuron.Output(neuron.getInputs(),neuron.getWeights());
@@ -97,7 +97,7 @@ class NeuralNet implements Serializable {
         for(int i = 0; i < answer.length; i++){
             sum+=Math.pow(answer[i]-outputLayerOut[i],2);
         }
-        System.out.println("Err: "+0.5*sum);
+        //System.out.println("Err: "+0.5*sum);
         return 0.5*sum;
     }
 
@@ -124,12 +124,16 @@ class NeuralNet implements Serializable {
     }
 
     void study(){
+        initHidden(patterns[0]);
+        countHiddenLayerOut();
+        initOutputLayer();
+        int count = 0;
         do {
             for (int numOfPatterns = 0; numOfPatterns < patterns.length; numOfPatterns++) {
                 setHiddenLayerInputs(patterns[numOfPatterns]);
-                counthiddenLayerOut();
+                countHiddenLayerOut();
                 setOutputLayerInputs();
-                counOutput();
+                countOutput();
                 do {
                     for (int i = 0; i < outputLayer.size(); i++) {
                         Neuron neuron = outputLayer.get(i);
@@ -162,16 +166,19 @@ class NeuralNet implements Serializable {
                         }
                         neuron.setWeights(newWeight);
                     }
-                    counthiddenLayerOut();
+                    countHiddenLayerOut();
                     setOutputLayerInputs();
-                    counOutput();
+                    countOutput();
                 } while (ERROR(answers[numOfPatterns]) > 0.00001);
             }
             setHiddenLayerInputs(patterns[0]);
-            counthiddenLayerOut();
+            countHiddenLayerOut();
             setOutputLayerInputs();
-            counOutput();
-        }while (ERROR(answers[0])>0.00001);
+            countOutput();
+            System.out.println(count);
+            count++;
+        }while (count<50);
+        System.out.println("Количество эпох: "+count);
     }
 
     HashMap<Integer,String> check(double[] input){
@@ -179,14 +186,18 @@ class NeuralNet implements Serializable {
         for (Neuron hiddenNeuron: hiddenLayer){
             hiddenNeuron.setInputs(input);
         }
-        counthiddenLayerOut();
+        countHiddenLayerOut();
         for (Neuron outputNeuron: outputLayer){
             outputNeuron.setInputs(hiddenLayerOut);
         }
-        counOutput();
+        countOutput();
+        double sum = 0;
+        for(double outNeuron: outputLayerOut){
+            sum+=outNeuron;
+        }
         int index = 0;
         for (double outputNeuron: outputLayerOut){
-            out.put(index,new DecimalFormat("#0.00").format(outputNeuron*100));
+            out.put(index,new DecimalFormat("#0.00").format((outputNeuron/sum)*100));
             index++;
         }
         return out;

@@ -32,6 +32,7 @@ class Neuron implements Serializable {
     void setWeights(double[] weights) {
         this.weights = weights;
     }
+
     void setInputs(double[] inputs) {
         this.inputs = inputs;
     }
