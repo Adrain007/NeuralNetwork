@@ -171,11 +171,7 @@ class NeuralNet implements Serializable {
                     countOutput();
                 } while (ERROR(answers[numOfPatterns]) > 0.00001);
             }
-            setHiddenLayerInputs(patterns[0]);
-            countHiddenLayerOut();
-            setOutputLayerInputs();
-            countOutput();
-            System.out.println(count);
+            System.out.println("Эпоха: "+count);
             count++;
         }while (count<50);
         System.out.println("Количество эпох: "+count);
